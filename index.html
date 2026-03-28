@@ -698,29 +698,7 @@ color: var(–accent);
 }
 .home-action-btn–accent:hover, .home-action-btn–accent:focus { background: rgba(61,214,140,0.2); }
 
-/* ── Toggle indicator (visual only, on role=switch button) ── */
-.toggle-indicator {
-position: relative;
-display: inline-block;
-width: 44px; height: 26px;
-border-radius: 13px;
-background: var(–border);
-transition: background 0.2s;
-flex-shrink: 0;
-}
-.toggle-indicator::after {
-content: ‘’;
-position: absolute;
-top: 3px; left: 3px;
-width: 20px; height: 20px;
-border-radius: 50%;
-background: var(–text-muted);
-transition: transform 0.2s, background 0.2s;
-}
-.switch-on .toggle-indicator { background: var(–accent); }
-.switch-on .toggle-indicator::after { transform: translateX(18px); background: #0e1117; }
 </style>
-
 </head>
 <body>
 
@@ -852,18 +830,7 @@ transition: transform 0.2s, background 0.2s;
     <h2 class="sheet-title" id="settingsSheetTitle">Settings</h2>
     <button class="sheet-close-btn" data-close="settingsSheet" aria-label="Close Settings">Done</button>
   </div>
-  <div class="menu-section">
-    <div class="menu-section-label" role="heading" aria-level="3">Display</div>
-    <button class="menu-row"
-            role="switch"
-            id="showStatsToggle"
-            aria-checked="false"
-            aria-label="Show member count on group page">
-      <span class="menu-icon" aria-hidden="true">📊</span>
-      <span class="menu-label" aria-hidden="true">Show member count on group page</span>
-      <span class="toggle-indicator" aria-hidden="true"></span>
-    </button>
-  </div>
+
   <div class="menu-section">
     <div class="menu-section-label" role="heading" aria-level="3">Groups</div>
     <button class="menu-row" id="manageGroupsBtn" aria-label="Manage groups">
@@ -1475,12 +1442,7 @@ function updateAttendanceCounts() {
   if (!g) return;
   ensureAttendance(activeGroupId);
   const count = g.members.filter(m => attendance[activeGroupId][m]).length;
-  // Optional present count in subheader (controlled by settings toggle)
-  const subCount = document.getElementById('attendancePresentCount');
-  if (subCount) {
-    subCount.textContent = count + ' present';
-    subCount.style.display = state.showMemberCount ? '' : 'none';
-  }
+
   document.getElementById('footerPresentCount').textContent = count;
   document.getElementById('footerTotalLabel').textContent = 'of ' + g.members.length + ' present';
   document.getElementById('sendEmailBtn').disabled = count === 0;
@@ -1601,23 +1563,11 @@ document.querySelectorAll('[data-close]').forEach(btn => {
 })();
 
 document.getElementById('settingsBtn').addEventListener('click', () => {
-  // Sync toggle state before opening
-  const tog = document.getElementById('showStatsToggle');
-  const on = !!state.showMemberCount;
-  tog.setAttribute('aria-checked', on ? 'true' : 'false');
-  tog.classList.toggle('switch-on', on);
   openSheet('settingsSheet');
 });
 document.getElementById('helpBtn').addEventListener('click', () => openSheet('helpSheet'));
 
-document.getElementById('showStatsToggle').addEventListener('click', () => {
-  state.showMemberCount = !state.showMemberCount;
-  const tog = document.getElementById('showStatsToggle');
-  tog.setAttribute('aria-checked', state.showMemberCount ? 'true' : 'false');
-  tog.classList.toggle('switch-on', state.showMemberCount);
-  save();
-  updateAttendanceCounts();
-});
+
 document.getElementById('helpFromSettingsBtn').addEventListener('click', () => { openSheet('helpSheet'); });
 document.getElementById('kofiBtn').addEventListener('click', () => {
   window.open('https://ko-fi.com/st94410093', '_blank');
