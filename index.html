@@ -924,15 +924,15 @@ transition: transform 0.2s, background 0.2s;
     <input type="hidden" id="groupFormId">
     <div class="form-group">
       <label class="form-label" for="groupFormName">Group name</label>
-      <input class="form-input" type="text" id="groupFormName" placeholder="e.g. Monday Tech Club" autocomplete="off">
+      <input class="form-input" type="text" id="groupFormName" placeholder="" autocomplete="off">
     </div>
     <div class="form-group">
       <label class="form-label" for="groupFormOrg">Organisation name <span style="color:var(--text-muted);font-size:0.7rem;">(optional)</span></label>
-      <input class="form-input" type="text" id="groupFormOrg" placeholder="e.g. Insight Groups" autocomplete="off">
+      <input class="form-input" type="text" id="groupFormOrg" placeholder="" autocomplete="off">
     </div>
     <div class="form-group">
       <label class="form-label" for="groupFormEmail">Recipient email</label>
-      <input class="form-input" type="email" id="groupFormEmail" placeholder="recipient@example.com">
+      <input class="form-input" type="email" id="groupFormEmail" placeholder="">
     </div>
     <div class="form-group">
       <label class="form-label" for="groupFormIcon">Icon</label>
@@ -1314,33 +1314,7 @@ transition: transform 0.2s, background 0.2s;
 // ══════════════════════════════════════════════════
 const STORAGE_KEY = 'rollcall_v1';
 
-const DEFAULT_GROUPS = [{
-  id: 'techclub',
-  name: 'Tech Club',
-  icon: '💻',
-  colour: '#3dd68c',
-  email: 'insight@example.com',
-  members: [
-    'Adrian Talpa','Albert Brown','Ann Marie Carney','Ann Marie Powell',
-    'Annette McCarthy','Bob Corazza','Brendon Foster','Brian McDonagh',
-    'Brian McKenna',"Cearbhall O'Meadhra",'Chris Egan','Chris Logue',
-    'Claire Cassidy',"Dara O'Cinnéide",'Declan Meenagh','Derry Walsh',
-    'Dominique Farrell',"Eamonn O'Connor","Elaine O'Neill",'Emily',
-    'Garth Long','Gavin Allman','Gerard Eastwood','Gerard McHugh',
-    'Helen Fitzgerald','Helen Hamilton','Helen Stoker','Igor',
-    'Jackie McBrearty','James Fitzgerald','Joan Ann Brosnan',
-    'Joan Noonan','Joe Murphy','John Acton','John Chambers',
-    'Joanne Ryan','Julie Graham','Kamil Tomko','Kathleen Gorman',
-    'Ken Walsh','Marc McDonald','Marian Brennan','Marian Murray',
-    'Marie Rose','Martha Parkinson','Martin Kelly','Mary Lavelle',
-    'Mary Rose Mullen','Martina Morley','Michael Brown','Michael Lorigan',
-    'Noreen Meagher','Noel Ryan',"Norma O'Meara",'Olive Lynch',
-    'Pat McCarthy','Pat Walsh','Paul Griffith','Paudie Cotterell',
-    'Raymond Barber','Rob Webb','Ronan McGuirk','Sean Kavanagh',
-    'Sharon Lyons','Stuart Haxell','Stuart Lawler','Tom Langan',
-    "Tom O'Neil",'Vera Naughton','Vincent Keane','Wiktoria Kaminska'
-  ].sort((a,b) => a.localeCompare(b))
-}];
+const DEFAULT_GROUPS = [];
 
 let state = load();
 let attendance = {};    // groupId → { name: bool }
