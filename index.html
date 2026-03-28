@@ -1346,6 +1346,7 @@ function ordinal(n) {
   return n + (s[(v-20)%10] || s[v] || s[0]);
 }
 const shortDate = todayName + ' ' + ordinal(now.getDate()) + ' ' + now.toLocaleDateString('en-IE', { month: 'long' });
+const dateOnly = ordinal(now.getDate()) + ' ' + now.toLocaleDateString('en-IE', { month: 'long', year: 'numeric' });
 
 // ══════════════════════════════════════════════════
 // VIEWS
@@ -1516,11 +1517,8 @@ document.getElementById('sendEmailBtn').addEventListener('click', () => {
   const present = g.members.filter(m => attendance[activeGroupId][m]);
   if (!present.length) return;
 
-  const subject = g.name + ' Attendance — ' + shortDate;
-  const body = [
-    'Members present (' + present.length + ' of ' + g.members.length + '):', '',
-    ...present.map(n => '• ' + n)
-  ].join('\n');
+  const subject = g.name + ' Attendance — ' + dateOnly;
+  const body = present.join('\n');
 
   window.location.href = 'mailto:' + (g.email || '')
     + '?subject=' + encodeURIComponent(subject)
@@ -1528,7 +1526,8 @@ document.getElementById('sendEmailBtn').addEventListener('click', () => {
 
   setTimeout(() => {
     g.members.forEach(m => attendance[activeGroupId][m] = false);
-    renderMemberList(document.getElementById('memberSearch').value);
+    document.getElementById('memberSearch').value = '';
+    renderMemberList('');
     toast('Sent! Attendance reset.');
   }, 1500);
 });
