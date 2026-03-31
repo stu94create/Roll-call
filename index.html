@@ -9,19 +9,75 @@
 <meta http-equiv="Pragma" content="no-cache">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>Rollcall</title>
+<script>
+// ── EXPTER THEME SYNC — runs before any CSS renders ──
+(function applyExpterTheme() {
+  const theme = localStorage.getItem('expter-theme') || 'amber';
+  const themes = {
+    amber: {
+      bg: '#000000', surface: '#0d0d0d', surface2: '#1a1a1a',
+      border: '#2a1f00', accent: '#E8850A',
+      accentDim: 'rgba(232,133,10,0.12)', accentGlow: 'rgba(232,133,10,0.25)',
+      text: '#E8850A', textMuted: '#7a5200', danger: '#e05252',
+      dangerDim: 'rgba(224,82,82,0.12)'
+    },
+    green: {
+      bg: '#000000', surface: '#0a120a', surface2: '#0f1f0f',
+      border: '#1a3a1a', accent: '#00FF41',
+      accentDim: 'rgba(0,255,65,0.12)', accentGlow: 'rgba(0,255,65,0.25)',
+      text: '#00FF41', textMuted: '#1a7a1a', danger: '#e05252',
+      dangerDim: 'rgba(224,82,82,0.12)'
+    },
+    blue: {
+      bg: '#000810', surface: '#060f1f', surface2: '#0d1a30',
+      border: '#0d2040', accent: '#00BFFF',
+      accentDim: 'rgba(0,191,255,0.12)', accentGlow: 'rgba(0,191,255,0.25)',
+      text: '#00BFFF', textMuted: '#1a5a7a', danger: '#e05252',
+      dangerDim: 'rgba(224,82,82,0.12)'
+    },
+    white: {
+      bg: '#000000', surface: '#111111', surface2: '#1a1a1a',
+      border: '#333333', accent: '#E0E0E0',
+      accentDim: 'rgba(224,224,224,0.12)', accentGlow: 'rgba(224,224,224,0.25)',
+      text: '#E0E0E0', textMuted: '#666666', danger: '#e05252',
+      dangerDim: 'rgba(224,82,82,0.12)'
+    },
+    red: {
+      bg: '#050000', surface: '#150000', surface2: '#200000',
+      border: '#3a0000', accent: '#FF2020',
+      accentDim: 'rgba(255,32,32,0.12)', accentGlow: 'rgba(255,32,32,0.25)',
+      text: '#FF2020', textMuted: '#7a1010', danger: '#FF2020',
+      dangerDim: 'rgba(255,32,32,0.12)'
+    }
+  };
+  const t = themes[theme] || themes.amber;
+  const root = document.documentElement;
+  root.style.setProperty('--bg', t.bg);
+  root.style.setProperty('--surface', t.surface);
+  root.style.setProperty('--surface2', t.surface2);
+  root.style.setProperty('--border', t.border);
+  root.style.setProperty('--accent', t.accent);
+  root.style.setProperty('--accent-dim', t.accentDim);
+  root.style.setProperty('--accent-glow', t.accentGlow);
+  root.style.setProperty('--text', t.text);
+  root.style.setProperty('--text-muted', t.textMuted);
+  root.style.setProperty('--danger', t.danger);
+  root.style.setProperty('--danger-dim', t.dangerDim);
+})();
+</script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;1,9..144,300&display=swap');
 
 :root {
-–bg: #0e1117;
-–surface: #161b26;
-–surface2: #1e2636;
-–border: #2a3347;
-–accent: #3dd68c;
-–accent-dim: rgba(61,214,140,0.12);
-–accent-glow: rgba(61,214,140,0.25);
-–text: #e8edf5;
-–text-muted: #6b7a99;
+–bg: #000000;
+–surface: #0d0d0d;
+–surface2: #1a1a1a;
+–border: #2a1f00;
+–accent: #E8850A;
+–accent-dim: rgba(232,133,10,0.12);
+–accent-glow: rgba(232,133,10,0.25);
+–text: #E8850A;
+–text-muted: #7a5200;
 –danger: #e05252;
 –danger-dim: rgba(224,82,82,0.12);
 }
@@ -35,11 +91,9 @@ color: var(–text);
 overflow-x: hidden;
 }
 
-/* ─── VIEWS ─────────────────────────────────────────── */
 .view { display: none; flex-direction: column; height: 100vh; }
 .view.active { display: flex; }
 
-/* ─── SHARED HEADER ──────────────────────────────────── */
 .view-header {
 background: var(–surface);
 border-bottom: 1px solid var(–border);
@@ -94,7 +148,6 @@ flex-shrink: 0;
 }
 .icon-btn:hover, .icon-btn:focus { border-color: var(–accent); color: var(–accent); outline: none; }
 
-/* ─── SCROLLABLE BODY ─────────────────────────────────── */
 .view-body {
 flex: 1;
 overflow-y: auto;
@@ -102,7 +155,6 @@ overflow-y: auto;
 padding-bottom: 1rem;
 }
 
-/* ─── HOME VIEW ───────────────────────────────────────── */
 #homeHeader {
 background: var(–surface);
 border-bottom: 1px solid var(–border);
@@ -131,7 +183,6 @@ color: var(–text-muted);
 border-top: 1px solid var(–border);
 }
 
-/* ── Group cards ── */
 .group-list {
 padding: 0.9rem 1rem;
 display: flex;
@@ -187,10 +238,8 @@ margin-top: 0.2rem;
 }
 
 .group-card-chevron { color: var(–text-muted); font-size: 0.9rem; flex-shrink: 0; }
-
 .empty-state { text-align: center; color: var(–text-muted); }
 
-/* ─── ATTENDANCE VIEW ─────────────────────────────────── */
 .attendance-subheader {
 background: var(–surface);
 border-bottom: 1px solid var(–border);
@@ -208,10 +257,7 @@ margin-bottom: 0.6rem;
 
 .present-count { font-size: 0.75rem; color: var(–accent); }
 
-.search-row {
-display: flex;
-gap: 0.5rem;
-}
+.search-row { display: flex; gap: 0.5rem; }
 
 .search-row input {
 flex: 1;
@@ -228,7 +274,6 @@ transition: border-color 0.2s;
 .search-row input:focus { border-color: var(–accent); box-shadow: 0 0 0 3px var(–accent-glow); }
 .search-row input::placeholder { color: var(–text-muted); }
 
-/* ── Quick action pills ── */
 .quick-actions {
 display: flex;
 gap: 0.4rem;
@@ -250,7 +295,6 @@ white-space: nowrap;
 }
 .pill-btn:hover, .pill-btn:focus { border-color: var(–accent); color: var(–accent); outline: none; }
 
-/* ── Member items ── */
 .member-list {
 list-style: none;
 padding: 0.75rem 1rem 0;
@@ -270,19 +314,11 @@ padding: 0.8rem 1rem;
 cursor: pointer;
 transition: background 0.12s, border-color 0.12s;
 -webkit-tap-highlight-color: transparent;
-/* VoiceOver focus ring on the whole row */
 }
 .member-item:hover { background: var(–surface2); }
-.member-item:focus {
-outline: 3px solid var(–accent-glow);
-outline-offset: 2px;
-}
-.member-item.present {
-background: var(–accent-dim);
-border-color: rgba(61,214,140,0.35);
-}
+.member-item:focus { outline: 3px solid var(–accent-glow); outline-offset: 2px; }
+.member-item.present { background: var(–accent-dim); border-color: rgba(232,133,10,0.35); }
 
-/* Visual-only checkbox box — not in the accessibility tree */
 .visual-checkbox {
 width: 22px; height: 22px; min-width: 22px;
 border: 2px solid var(–border);
@@ -292,14 +328,11 @@ transition: all 0.12s;
 display: grid; place-items: center;
 flex-shrink: 0;
 }
-.visual-checkbox.checked {
-background: var(–accent);
-border-color: var(–accent);
-}
+.visual-checkbox.checked { background: var(–accent); border-color: var(–accent); }
 .visual-checkbox.checked::after {
 content: ‘’;
 width: 5px; height: 9px;
-border: 2px solid #0e1117;
+border: 2px solid var(–bg);
 border-top: none; border-left: none;
 transform: rotate(45deg) translateY(-1px);
 display: block;
@@ -322,7 +355,6 @@ padding: 2rem 1rem;
 }
 #attendanceBody { padding-bottom: 5.5rem; }
 
-/* ── Send bar (fixed footer) ── */
 .send-bar {
 position: fixed;
 bottom: 0; left: 0; right: 0;
@@ -346,7 +378,7 @@ padding: 0.7rem 1.35rem;
 border-radius: 9px;
 border: none;
 background: var(–accent);
-color: #0e1117;
+color: var(–bg);
 cursor: pointer;
 transition: all 0.15s;
 white-space: nowrap;
@@ -354,7 +386,6 @@ white-space: nowrap;
 .btn-send:hover, .btn-send:focus { filter: brightness(1.1); outline: 3px solid var(–accent-glow); outline-offset: 2px; }
 .btn-send:disabled { background: var(–border); color: var(–text-muted); cursor: not-allowed; filter: none; outline: none; }
 
-/* ─── BOTTOM SHEET (settings / manage / new group) ───── */
 .sheet-backdrop {
 position: fixed; inset: 0;
 background: rgba(0,0,0,0.65);
@@ -415,7 +446,6 @@ transition: all 0.15s;
 }
 .sheet-close-btn:hover, .sheet-close-btn:focus { color: var(–text); border-color: var(–text-muted); outline: none; }
 
-/* ── Settings menu rows ── */
 .menu-section { padding: 0.5rem 0; }
 .menu-section + .menu-section { border-top: 1px solid var(–border); }
 
@@ -447,10 +477,8 @@ text-align: left;
 .menu-row .menu-icon { font-size: 1.1rem; width: 24px; text-align: center; flex-shrink: 0; }
 .menu-row .menu-label { flex: 1; }
 .menu-row .menu-chevron { color: var(–text-muted); font-size: 0.8rem; }
-/* ── Manage members sub-panel ── */
-.sheet-sub {
-padding: 0.75rem 1.1rem;
-}
+
+.sheet-sub { padding: 0.75rem 1.1rem; }
 
 .form-group { display: flex; flex-direction: column; gap: 0.35rem; margin-bottom: 0.75rem; }
 .form-label {
@@ -486,7 +514,7 @@ padding: 0.75rem;
 border-radius: 9px;
 border: none;
 background: var(–accent);
-color: #0e1117;
+color: var(–bg);
 cursor: pointer;
 transition: all 0.15s;
 margin-top: 0.25rem;
@@ -508,7 +536,6 @@ margin-top: 0.4rem;
 }
 .btn-danger:hover, .btn-danger:focus { background: rgba(224,82,82,0.22); outline: none; }
 
-/* ── Removable member list inside sheet ── */
 .removable-list {
 display: flex;
 flex-direction: column;
@@ -541,13 +568,12 @@ flex-shrink: 0;
 }
 .btn-remove:hover, .btn-remove:focus { background: rgba(224,82,82,0.22); outline: none; }
 
-/* ── Toast ── */
 .toast {
 position: fixed;
 top: 1rem; left: 50%;
 transform: translateX(-50%) translateY(-120px);
 background: var(–accent);
-color: #0e1117;
+color: var(–bg);
 font-family: ‘DM Mono’, monospace;
 font-size: 0.8rem;
 padding: 0.6rem 1.2rem;
@@ -560,124 +586,26 @@ max-width: 90vw;
 text-align: center;
 }
 .toast.show { transform: translateX(-50%) translateY(0); }
-
 .hidden { display: none !important; }
 
-/* ── Responsive: iPad and larger screens ── */
 @media (min-width: 600px) {
-
-/* Centre and constrain all views */
-.view {
-align-items: center;
-}
-
-#homeHeader,
-.view-header,
-.attendance-subheader,
-.view-body,
-.group-list,
-.member-list,
-.send-bar > *,
-.sheet {
-max-width: 560px;
-width: 100%;
-}
-
-/* Headers and subheaders need to span full width for background colour
-but constrain their inner content */
-#homeHeader {
-width: 100%;
-max-width: 100%;
-display: flex;
-flex-direction: column;
-align-items: center;
-}
-#homeHeader > * {
-width: 100%;
-max-width: 560px;
-}
-
-.view-header {
-width: 100%;
-max-width: 100%;
-display: flex;
-justify-content: center;
-}
-.view-header > * {
-max-width: 560px;
-width: 100%;
-display: flex;
-align-items: center;
-gap: 0.75rem;
-}
-
-.attendance-subheader {
-width: 100%;
-max-width: 100%;
-display: flex;
-flex-direction: column;
-align-items: center;
-}
-.attendance-subheader > * {
-width: 100%;
-max-width: 560px;
-}
-
-/* Send bar centred */
-.send-bar {
-display: flex;
-justify-content: center;
-}
-.send-bar > * { max-width: none; }
-.send-bar {
-padding-left: calc(50% - 280px);
-padding-right: calc(50% - 280px);
-}
-
-/* Sheets constrained and centred, floating above rather than edge-to-edge */
-.sheet {
-left: 50%;
-transform: translateX(-50%) translateY(100%);
-border-radius: 16px 16px 0 0;
-max-width: 560px;
-}
-.sheet.open {
-transform: translateX(-50%) translateY(0);
-}
-
-/* Larger font for comfortable reading on iPad */
+.view { align-items: center; }
+#homeHeader, .view-header, .attendance-subheader, .view-body, .group-list, .member-list { max-width: 560px; width: 100%; }
+#homeHeader { width: 100%; max-width: 100%; display: flex; flex-direction: column; align-items: center; }
+#homeHeader > * { width: 100%; max-width: 560px; }
+.view-header { width: 100%; max-width: 100%; display: flex; justify-content: center; }
+.view-header > * { max-width: 560px; width: 100%; display: flex; align-items: center; gap: 0.75rem; }
+.attendance-subheader { width: 100%; max-width: 100%; display: flex; flex-direction: column; align-items: center; }
+.attendance-subheader > * { width: 100%; max-width: 560px; }
+.send-bar { display: flex; justify-content: center; padding-left: calc(50% - 280px); padding-right: calc(50% - 280px); }
+.sheet { left: 50%; transform: translateX(-50%) translateY(100%); border-radius: 16px 16px 0 0; max-width: 560px; }
+.sheet.open { transform: translateX(-50%) translateY(0); }
 .member-name { font-size: 0.95rem; }
 .group-card-name { font-size: 1rem; }
-.home-action-btn { font-size: 0.8rem; padding: 0.5rem 0.9rem; }
-
-/* Welcome screen: constrain width */
 .welcome-body { max-width: 560px; margin: 0 auto; }
-
-/* Member items slightly taller for easier tapping on iPad */
 .member-item { padding: 1rem 1.1rem; }
 }
 
-@media (min-width: 900px) {
-/* Desktop-ish: slightly wider cap */
-#homeHeader > *,
-.attendance-subheader > *,
-.sheet,
-.view-body,
-.group-list,
-.member-list {
-max-width: 640px;
-}
-.send-bar {
-padding-left: calc(50% - 320px);
-padding-right: calc(50% - 320px);
-}
-.sheet {
-max-width: 640px;
-}
-.welcome-body { max-width: 640px; }
-}
-
-/* ── Labelled home action buttons ── */
 .home-action-btn {
 font-family: ‘DM Mono’, monospace;
 font-size: 0.75rem;
@@ -691,18 +619,74 @@ transition: all 0.15s;
 white-space: nowrap;
 }
 .home-action-btn:hover, .home-action-btn:focus { border-color: var(–accent); color: var(–accent); outline: none; }
-.home-action-btn–accent {
-border-color: rgba(61,214,140,0.4);
-background: var(–accent-dim);
-color: var(–accent);
-}
-.home-action-btn–accent:hover, .home-action-btn–accent:focus { background: rgba(61,214,140,0.2); }
+.home-action-btn–accent { border-color: rgba(232,133,10,0.4); background: var(–accent-dim); color: var(–accent); }
+.home-action-btn–accent:hover, .home-action-btn–accent:focus { background: rgba(232,133,10,0.2); }
 
+.help-content { padding-bottom: 1.5rem; }
+.help-section { padding: 0.9rem 0; border-bottom: 1px solid var(–border); }
+.help-section:last-child { border-bottom: none; }
+.help-heading { font-family: ‘Fraunces’, serif; font-size: 0.95rem; font-weight: 600; color: var(–text); margin-bottom: 0.4rem; }
+.help-section p { font-size: 0.82rem; color: var(–text-muted); line-height: 1.7; }
+
+@keyframes checkPop { 0%{transform:scale(1)} 40%{transform:scale(1.04)} 100%{transform:scale(1)} }
+.member-item.present { animation: checkPop 0.2s ease; }
+
+.send-bar-summary strong { font-size: 2rem; line-height: 1; color: var(–accent); }
+.send-bar-label { font-size: 0.72rem; color: var(–text-muted); display: block; margin-top: 0.1rem; }
+.group-card { transition: background 0.15s, border-color 0.15s, transform 0.1s; }
+.group-card:active { transform: scale(0.98); }
+
+.empty-state { padding: 4rem 2rem 2rem; }
+.empty-state-icon { font-size: 3rem; margin-bottom: 1rem; display: block; }
+.empty-state h2 { font-family: ‘Fraunces’, serif; font-size: 1.2rem; font-weight: 600; color: var(–text); margin-bottom: 0.5rem; }
+.empty-state p { font-size: 0.82rem; color: var(–text-muted); line-height: 1.7; margin-bottom: 1.25rem; }
+
+.attendance-meta { gap: 0.5rem; }
+.date-label { font-size: 0.82rem; font-weight: 500; color: var(–text); }
+.member-total { font-size: 0.75rem; color: var(–text-muted); background: var(–surface2); border: 1px solid var(–border); border-radius: 20px; padding: 0.1rem 0.55rem; }
+.home-summary { font-size: 0.78rem; letter-spacing: 0.02em; }
+
+.member-remove-confirm { display: flex; gap: 0.4rem; margin-left: auto; }
+.removable-item { flex-wrap: wrap; gap: 0.4rem; }
+
+.delete-confirm { margin-top: 0.5rem; background: var(–danger-dim); border: 1px solid rgba(224,82,82,0.35); border-radius: 9px; padding: 0.85rem 1rem; }
+.delete-confirm-msg { font-size: 0.8rem; color: var(–danger); margin-bottom: 0.65rem; }
+.delete-confirm-btns { display: flex; gap: 0.5rem; }
+.delete-confirm-btns .btn-danger { margin-top: 0; flex: 1; }
+.btn-outline-cancel { flex: 1; font-family: ‘DM Mono’, monospace; font-size: 0.82rem; padding: 0.65rem; border-radius: 9px; border: 1px solid var(–border); background: var(–surface2); color: var(–text-muted); cursor: pointer; transition: all 0.15s; }
+.btn-outline-cancel:hover, .btn-outline-cancel:focus { border-color: var(–text-muted); color: var(–text); outline: none; }
+
+.import-textarea { resize: vertical; min-height: 90px; margin-bottom: 0.5rem; font-size: 0.82rem; line-height: 1.6; }
+.import-section { border-top: 1px solid var(–border); padding-top: 0.75rem; margin-bottom: 0.75rem; }
+.import-section-label { font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(–text-muted); margin-bottom: 0.3rem; }
+.import-hint { font-size: 0.75rem; color: var(–text-muted); line-height: 1.5; margin-bottom: 0.6rem; }
+.btn-import { font-family: ‘DM Mono’, monospace; font-size: 0.8rem; padding: 0.6rem 1rem; border-radius: 8px; border: 1px solid var(–border); background: var(–surface2); color: var(–text-muted); cursor: pointer; transition: all 0.15s; width: 100%; text-align: left; }
+.btn-import:hover, .btn-import:focus { border-color: var(–accent); color: var(–accent); outline: none; }
+
+.colour-picker { display: flex; gap: 0.6rem; flex-wrap: wrap; margin-top: 0.3rem; }
+.colour-btn { width: 36px; height: 36px; border-radius: 50%; border: 3px solid transparent; cursor: pointer; transition: all 0.12s; flex-shrink: 0; }
+.colour-btn.selected { border-color: var(–text); transform: scale(1.15); }
+.colour-btn:focus { outline: 3px solid var(–accent-glow); outline-offset: 2px; }
+
+.group-card-colour { width: 4px; border-radius: 2px; align-self: stretch; flex-shrink: 0; min-height: 36px; }
+
+.welcome-body { flex: 1; overflow-y: auto; padding: 2.5rem 1.5rem 2rem; display: flex; flex-direction: column; align-items: center; text-align: center; }
+.welcome-logo { font-size: 3rem; margin-bottom: 0.75rem; }
+.welcome-title { font-family: ‘Fraunces’, serif; font-size: 2rem; font-weight: 600; color: var(–text); margin-bottom: 0.35rem; }
+.welcome-sub { font-size: 0.85rem; color: var(–text-muted); margin-bottom: 2rem; }
+.welcome-steps { display: flex; flex-direction: column; gap: 1.25rem; width: 100%; text-align: left; }
+.welcome-step { display: flex; gap: 1rem; align-items: flex-start; background: var(–surface); border: 1px solid var(–border); border-radius: 10px; padding: 0.9rem 1rem; }
+.welcome-step-icon { font-size: 1.4rem; flex-shrink: 0; margin-top: 0.1rem; }
+.welcome-step strong { display: block; font-size: 0.88rem; color: var(–text); margin-bottom: 0.2rem; }
+.welcome-step p { font-size: 0.78rem; color: var(–text-muted); line-height: 1.5; margin: 0; }
+
+.icon-pick-btn { width: 40px; height: 40px; border-radius: 8px; border: 2px solid var(–border); background: var(–surface2); font-size: 1.25rem; cursor: pointer; display: grid; place-items: center; transition: all 0.12s; }
+.icon-pick-btn.selected { border-color: var(–accent); background: var(–accent-dim); }
+.icon-pick-btn:focus { outline: 2px solid var(–accent); }
 </style>
+
 </head>
 <body>
-
-<!-- ═══════════════════════════ WELCOME VIEW ══════════════ -->
 
 <div class="view" id="welcomeView" aria-label="Welcome to Rollcall">
   <div class="welcome-body">
@@ -712,48 +696,26 @@ color: var(–accent);
     <div class="welcome-steps">
       <div class="welcome-step">
         <span class="welcome-step-icon" aria-hidden="true">👥</span>
-        <div>
-          <strong>Create groups</strong>
-          <p>Tap New Group to set up each group with its own member list, email recipient, icon and colour. Add members one by one or paste a list of names to add them all at once.</p>
-        </div>
+        <div><strong>Create groups</strong><p>Tap New Group to set up each group with its own member list, email recipient, icon and colour.</p></div>
       </div>
       <div class="welcome-step">
         <span class="welcome-step-icon" aria-hidden="true">✅</span>
-        <div>
-          <strong>Take attendance</strong>
-          <p>Tap a group, then tap each name to mark them present. Use Select all or Clear all to set the whole list at once.</p>
-        </div>
+        <div><strong>Take attendance</strong><p>Tap a group, then tap each name to mark them present.</p></div>
       </div>
       <div class="welcome-step">
         <span class="welcome-step-icon" aria-hidden="true">📧</span>
-        <div>
-          <strong>Send the register</strong>
-          <p>Tap Send Email and your mail app opens pre-filled with the group name, date and everyone present. Attendance resets automatically after sending.</p>
-        </div>
-      </div>
-      <div class="welcome-step">
-        <span class="welcome-step-icon" aria-hidden="true">📱</span>
-        <div>
-          <strong>Add to your Home Screen</strong>
-          <p>In Safari tap Share then Add to Home Screen. This opens Rollcall like a full app, hides the browser controls, and makes it much less likely Safari will clear your data.</p>
-        </div>
+        <div><strong>Send the register</strong><p>Tap Send Email and your mail app opens pre-filled with everyone present.</p></div>
       </div>
       <div class="welcome-step">
         <span class="welcome-step-icon" aria-hidden="true">💾</span>
-        <div>
-          <strong>Back up regularly</strong>
-          <p>Your data is stored on this device only. Go to Settings and tap Backup Data. Save the file to a Rollcall Backups folder in iCloud Drive — it syncs automatically and keeps your data safe if your phone is lost. Do this after every session.</p>
-        </div>
+        <div><strong>Back up regularly</strong><p>Go to Settings and tap Backup Data. Save to iCloud Drive after every session.</p></div>
       </div>
     </div>
     <button class="btn-primary" id="welcomeStartBtn" style="margin-top:1.5rem;">Get Started</button>
   </div>
 </div>
 
-<!-- ═══════════════════════════════ HOME VIEW ═══════════ -->
-
 <div class="view" id="homeView" aria-label="Groups home">
-
   <div id="homeHeader">
     <div class="home-title-row">
       <span class="app-wordmark">Rollcall</span>
@@ -765,28 +727,22 @@ color: var(–accent);
     </div>
     <div class="home-summary" id="homeSummary"></div>
   </div>
-
   <div class="view-body">
     <div class="group-list" id="groupList" aria-label="Your groups"></div>
     <div class="empty-state hidden" id="emptyState">
       <span class="empty-state-icon" aria-hidden="true">📋</span>
       <h2>No groups yet</h2>
-      <p>Tap New Group to get started. Each group has its own member list, colour and email recipient.</p>
+      <p>Tap New Group to get started.</p>
       <button class="btn-primary" id="emptyAddGroupBtn" style="max-width:220px;margin:0 auto;">+ New Group</button>
     </div>
   </div>
 </div>
 
-<!-- ═══════════════════════════ ATTENDANCE VIEW ════════════ -->
-
 <div class="view" id="attendanceView" aria-label="Attendance">
-
   <header class="view-header" id="attendanceHeader">
     <button class="back-btn" id="backBtn" aria-label="Back to groups">← Groups</button>
     <h1 class="view-title" id="attendanceTitle">Group</h1>
-
   </header>
-
   <div class="attendance-subheader">
     <div class="attendance-meta" id="attendanceMeta" aria-label="Session info">
       <span class="date-label" id="attendanceDateLabel" aria-hidden="true"></span>
@@ -803,12 +759,10 @@ color: var(–accent);
       <button class="pill-btn" id="groupSettingsBtn" aria-label="Group settings">Settings</button>
     </div>
   </div>
-
   <div class="view-body" id="attendanceBody">
     <ul class="member-list" id="memberListEl" aria-label="Members"></ul>
     <p class="no-results hidden" id="noResultsMsg">No members match your search.</p>
   </div>
-
   <div class="send-bar">
     <div class="send-bar-summary" aria-live="polite" aria-label="Present count">
       <strong id="footerPresentCount">0</strong>
@@ -818,11 +772,7 @@ color: var(–accent);
   </div>
 </div>
 
-<!-- ═══════════════════════════ BOTTOM SHEETS ════════════ -->
-
 <div class="sheet-backdrop" id="sheetBackdrop" aria-hidden="true" inert></div>
-
-<!-- Settings sheet -->
 
 <div class="sheet" id="settingsSheet" inert aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="settingsSheetTitle">
   <div class="sheet-handle" aria-hidden="true"></div>
@@ -830,7 +780,6 @@ color: var(–accent);
     <h2 class="sheet-title" id="settingsSheetTitle">Settings</h2>
     <button class="sheet-close-btn" data-close="settingsSheet" aria-label="Close Settings">Done</button>
   </div>
-
   <div class="menu-section">
     <div class="menu-section-label" role="heading" aria-level="3">Groups</div>
     <button class="menu-row" id="manageGroupsBtn" aria-label="Manage groups">
@@ -853,9 +802,7 @@ color: var(–accent);
       <span class="menu-chevron" aria-hidden="true">›</span>
     </button>
     <input type="file" id="restoreInput" accept=".json" style="display:none;" aria-hidden="true">
-    <div class="delete-confirm hidden" id="restoreConfirm"
-         role="alertdialog" aria-modal="true"
-         aria-labelledby="restoreConfirmMsg">
+    <div class="delete-confirm hidden" id="restoreConfirm" role="alertdialog" aria-modal="true" aria-labelledby="restoreConfirmMsg">
       <p class="delete-confirm-msg" id="restoreConfirmMsg">This will replace all your current data. Are you sure?</p>
       <div class="delete-confirm-btns">
         <button class="btn-danger" id="restoreConfirmBtn">Yes, restore</button>
@@ -878,73 +825,67 @@ color: var(–accent);
   </div>
 </div>
 
-<!-- Add / edit group sheet -->
-
 <div class="sheet" id="groupFormSheet" inert aria-hidden="true" role="dialog" aria-modal="true" aria-label="Group details">
   <div class="sheet-handle" aria-hidden="true"></div>
   <div id="groupFormContent">
-  <div class="sheet-header">
-    <h2 class="sheet-title" id="groupFormTitle">New Group</h2>
-    <button class="sheet-close-btn" data-close="groupFormSheet" aria-label="Cancel group form">Cancel</button>
+    <div class="sheet-header">
+      <h2 class="sheet-title" id="groupFormTitle">New Group</h2>
+      <button class="sheet-close-btn" data-close="groupFormSheet" aria-label="Cancel group form">Cancel</button>
+    </div>
+    <div class="sheet-sub">
+      <input type="hidden" id="groupFormId">
+      <div class="form-group">
+        <label class="form-label" for="groupFormName">Group name</label>
+        <input class="form-input" type="text" id="groupFormName" placeholder="" autocomplete="off">
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="groupFormOrg">Organisation name <span style="color:var(--text-muted);font-size:0.7rem;">(optional)</span></label>
+        <input class="form-input" type="text" id="groupFormOrg" placeholder="" autocomplete="off">
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="groupFormEmail">Recipient email</label>
+        <input class="form-input" type="email" id="groupFormEmail" placeholder="">
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="groupFormIcon">Icon</label>
+        <div style="display:flex;gap:0.5rem;flex-wrap:wrap;margin-top:0.2rem;" id="iconPicker">
+          <button type="button" class="icon-pick-btn" data-icon="👥">👥</button>
+          <button type="button" class="icon-pick-btn" data-icon="🎨">🎨</button>
+          <button type="button" class="icon-pick-btn" data-icon="💻">💻</button>
+          <button type="button" class="icon-pick-btn" data-icon="📚">📚</button>
+          <button type="button" class="icon-pick-btn" data-icon="🎵">🎵</button>
+          <button type="button" class="icon-pick-btn" data-icon="🏃">🏃</button>
+          <button type="button" class="icon-pick-btn" data-icon="🌿">🌿</button>
+          <button type="button" class="icon-pick-btn" data-icon="⭐">⭐</button>
+        </div>
+        <input type="hidden" id="groupFormIcon" value="👥">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Colour</label>
+        <div class="colour-picker" id="colourPicker" role="group" aria-label="Choose group colour">
+          <button type="button" class="colour-btn" data-colour="#E8850A" aria-label="Amber" style="background:#E8850A;"></button>
+          <button type="button" class="colour-btn" data-colour="#5b9cf6" aria-label="Blue" style="background:#5b9cf6;"></button>
+          <button type="button" class="colour-btn" data-colour="#3dd68c" aria-label="Green" style="background:#3dd68c;"></button>
+          <button type="button" class="colour-btn" data-colour="#e05252" aria-label="Red" style="background:#e05252;"></button>
+          <button type="button" class="colour-btn" data-colour="#b06ef3" aria-label="Purple" style="background:#b06ef3;"></button>
+          <button type="button" class="colour-btn" data-colour="#f06292" aria-label="Pink" style="background:#f06292;"></button>
+          <button type="button" class="colour-btn" data-colour="#4dd0e1" aria-label="Teal" style="background:#4dd0e1;"></button>
+          <button type="button" class="colour-btn" data-colour="#aed581" aria-label="Lime" style="background:#aed581;"></button>
+        </div>
+        <input type="hidden" id="groupFormColour" value="#E8850A">
+      </div>
+      <button class="btn-primary" id="saveGroupBtn">Save Group</button>
+    </div>
   </div>
-  <div class="sheet-sub">
-    <input type="hidden" id="groupFormId">
-    <div class="form-group">
-      <label class="form-label" for="groupFormName">Group name</label>
-      <input class="form-input" type="text" id="groupFormName" placeholder="" autocomplete="off">
+  <button class="btn-danger hidden" id="deleteGroupBtn" aria-hidden="false">Delete Group</button>
+  <div class="delete-confirm hidden" id="deleteConfirm" role="alertdialog" aria-modal="true" aria-labelledby="deleteConfirmMsg">
+    <p class="delete-confirm-msg" id="deleteConfirmMsg">Are you sure? This cannot be undone.</p>
+    <div class="delete-confirm-btns">
+      <button class="btn-danger" id="deleteGroupConfirmBtn">Yes, delete</button>
+      <button class="btn-outline-cancel" id="deleteGroupCancelBtn">Cancel</button>
     </div>
-    <div class="form-group">
-      <label class="form-label" for="groupFormOrg">Organisation name <span style="color:var(--text-muted);font-size:0.7rem;">(optional)</span></label>
-      <input class="form-input" type="text" id="groupFormOrg" placeholder="" autocomplete="off">
-    </div>
-    <div class="form-group">
-      <label class="form-label" for="groupFormEmail">Recipient email</label>
-      <input class="form-input" type="email" id="groupFormEmail" placeholder="">
-    </div>
-    <div class="form-group">
-      <label class="form-label" for="groupFormIcon">Icon</label>
-      <div style="display:flex;gap:0.5rem;flex-wrap:wrap;margin-top:0.2rem;" id="iconPicker">
-        <button type="button" class="icon-pick-btn" data-icon="👥">👥</button>
-        <button type="button" class="icon-pick-btn" data-icon="🎨">🎨</button>
-        <button type="button" class="icon-pick-btn" data-icon="💻">💻</button>
-        <button type="button" class="icon-pick-btn" data-icon="📚">📚</button>
-        <button type="button" class="icon-pick-btn" data-icon="🎵">🎵</button>
-        <button type="button" class="icon-pick-btn" data-icon="🏃">🏃</button>
-        <button type="button" class="icon-pick-btn" data-icon="🌿">🌿</button>
-        <button type="button" class="icon-pick-btn" data-icon="⭐">⭐</button>
-      </div>
-      <input type="hidden" id="groupFormIcon" value="👥">
-    </div>
-    <div class="form-group">
-      <label class="form-label">Colour</label>
-      <div class="colour-picker" id="colourPicker" role="group" aria-label="Choose group colour">
-        <button type="button" class="colour-btn" data-colour="#3dd68c" aria-label="Green" style="background:#3dd68c;"></button>
-        <button type="button" class="colour-btn" data-colour="#5b9cf6" aria-label="Blue" style="background:#5b9cf6;"></button>
-        <button type="button" class="colour-btn" data-colour="#f5a623" aria-label="Amber" style="background:#f5a623;"></button>
-        <button type="button" class="colour-btn" data-colour="#e05252" aria-label="Red" style="background:#e05252;"></button>
-        <button type="button" class="colour-btn" data-colour="#b06ef3" aria-label="Purple" style="background:#b06ef3;"></button>
-        <button type="button" class="colour-btn" data-colour="#f06292" aria-label="Pink" style="background:#f06292;"></button>
-        <button type="button" class="colour-btn" data-colour="#4dd0e1" aria-label="Teal" style="background:#4dd0e1;"></button>
-        <button type="button" class="colour-btn" data-colour="#aed581" aria-label="Lime" style="background:#aed581;"></button>
-      </div>
-      <input type="hidden" id="groupFormColour" value="#3dd68c">
-    </div>
-    <button class="btn-primary" id="saveGroupBtn">Save Group</button>
-  </div><!-- /sheet-sub -->
-  </div><!-- /groupFormContent -->
-    <button class="btn-danger hidden" id="deleteGroupBtn" aria-hidden="false">Delete Group</button>
-    <div class="delete-confirm hidden" id="deleteConfirm"
-         role="alertdialog" aria-modal="true"
-         aria-labelledby="deleteConfirmMsg">
-      <p class="delete-confirm-msg" id="deleteConfirmMsg">Are you sure? This cannot be undone.</p>
-      <div class="delete-confirm-btns">
-        <button class="btn-danger" id="deleteGroupConfirmBtn">Yes, delete</button>
-        <button class="btn-outline-cancel" id="deleteGroupCancelBtn">Cancel</button>
-      </div>
-    </div>
+  </div>
 </div>
-
-<!-- Manage members sheet -->
 
 <div class="sheet" id="manageMembersSheet" inert aria-hidden="true" role="dialog" aria-modal="true" aria-label="Manage members">
   <div class="sheet-handle" aria-hidden="true"></div>
@@ -957,27 +898,18 @@ color: var(–accent);
       <label class="form-label" for="newMemberInput">Add a member</label>
       <div class="form-row-inline">
         <input class="form-input" type="text" id="newMemberInput" placeholder="Full name" autocomplete="off">
-        <button class="icon-btn" id="addMemberBtn" aria-label="Add member" style="width:44px;height:44px;flex-shrink:0;border-color:rgba(61,214,140,0.4);color:var(--accent);">+</button>
+        <button class="icon-btn" id="addMemberBtn" aria-label="Add member" style="width:44px;height:44px;flex-shrink:0;border-color:rgba(232,133,10,0.4);color:var(--accent);">+</button>
       </div>
     </div>
     <div class="import-section">
       <div class="import-section-label" role="heading" aria-level="3">Paste a list</div>
       <p class="import-hint">One name per line. Duplicates are skipped.</p>
-      <textarea class="form-input import-textarea" id="importPasteArea"
-        placeholder="Paste names here, one per line…"
-        aria-label="Paste member names, one per line"
-        rows="5"></textarea>
+      <textarea class="form-input import-textarea" id="importPasteArea" placeholder="Paste names here, one per line…" aria-label="Paste member names, one per line" rows="5"></textarea>
       <button class="btn-import" id="importPasteBtn" aria-label="Add pasted names">Add names</button>
-
-```
-</div>
-<ul class="removable-list" id="removableMemberList" aria-label="Current members"></ul>
-```
-
+    </div>
+    <ul class="removable-list" id="removableMemberList" aria-label="Current members"></ul>
   </div>
 </div>
-
-<!-- Help sheet -->
 
 <div class="sheet" id="helpSheet" inert aria-hidden="true" role="dialog" aria-modal="true" aria-label="Help">
   <div class="sheet-handle" aria-hidden="true"></div>
@@ -986,35 +918,12 @@ color: var(–accent);
     <button class="sheet-close-btn" data-close="helpSheet" aria-label="Close Help">Done</button>
   </div>
   <div class="sheet-sub help-content">
-    <div class="help-section">
-      <h3 class="help-heading">👥 Groups</h3>
-      <p>Tap New Group on the home screen to create a group. Give it a name, organisation, email address, icon and colour. You can edit any of these later by opening the group and tapping Settings in the quick actions bar.</p>
-    </div>
-    <div class="help-section">
-      <h3 class="help-heading">✅ Taking attendance</h3>
-      <p>Tap a group to open it. Tap each name to mark them present — it toggles on and off. Use Select all or Clear all to set the whole list at once. Use the search bar to find someone quickly in a large group.</p>
-    </div>
-    <div class="help-section">
-      <h3 class="help-heading">📧 Sending the register</h3>
-      <p>Tap Send Email at the bottom. Your mail app opens with the subject set to the group name and date, and the body listing everyone present. After 1.5 seconds attendance resets automatically ready for next time.</p>
-    </div>
-    <div class="help-section">
-      <h3 class="help-heading">👤 Managing members</h3>
-      <p>When setting up a group for the first time, the quickest way to add a large list is to paste all the names into the import box, one name per line. After that, use the single add field for any new members. To remove someone, tap Remove next to their name and confirm.</p>
-    </div>
-    <div class="help-section">
-      <h3 class="help-heading">💾 Backing up your data</h3>
-      <p>Your data is stored on this device only — it is not sent anywhere. Go to Settings and tap Backup Data to save the file. The best place to keep it is a folder called Rollcall Backups in iCloud Drive — it will sync across your devices and survive if your phone is lost. You can also email it to yourself as a second copy. To restore, tap Restore from backup and pick the file. Back up after every session.</p>
-    </div>
-    <div class="help-section">
-      <h3 class="help-heading">📱 Add to your Home Screen</h3>
-      <p>In Safari tap the Share button then tap Add to Home Screen. Make sure it says Add to Home Screen and not Add Bookmark — this is important. Once added, Rollcall opens as a full-screen app without browser controls, and iOS treats it more like a real app which makes data loss much less likely.</p>
-    </div>
-
+    <div class="help-section"><h3 class="help-heading">👥 Groups</h3><p>Tap New Group on the home screen to create a group. Give it a name, organisation, email address, icon and colour.</p></div>
+    <div class="help-section"><h3 class="help-heading">✅ Taking attendance</h3><p>Tap a group to open it. Tap each name to mark them present. Use Select all or Clear all to set the whole list at once.</p></div>
+    <div class="help-section"><h3 class="help-heading">📧 Sending the register</h3><p>Tap Send Email at the bottom. Your mail app opens with the subject and body pre-filled. Attendance resets automatically after 1.5 seconds.</p></div>
+    <div class="help-section"><h3 class="help-heading">💾 Backing up your data</h3><p>Your data is stored on this device only. Go to Settings and tap Backup Data. Save to iCloud Drive after every session.</p></div>
   </div>
 </div>
-
-<!-- Manage groups sheet -->
 
 <div class="sheet" id="manageGroupsSheet" inert aria-hidden="true" role="dialog" aria-modal="true" aria-label="Manage groups">
   <div class="sheet-handle" aria-hidden="true"></div>
@@ -1027,272 +936,18 @@ color: var(–accent);
 
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
-<style>
-/* ── Help content ── */
-.help-content { padding-bottom: 1.5rem; }
-.help-section {
-  padding: 0.9rem 0;
-  border-bottom: 1px solid var(--border);
-}
-.help-section:last-child { border-bottom: none; }
-.help-heading {
-  font-family: 'Fraunces', serif;
-  font-size: 0.95rem;
-  font-weight: 600;
-  color: var(--text);
-  margin-bottom: 0.4rem;
-}
-.help-section p {
-  font-size: 0.82rem;
-  color: var(--text-muted);
-  line-height: 1.7;
-}
-
-/* ── Visual polish: member item check animation ── */
-@keyframes checkPop {
-  0%   { transform: scale(1); }
-  40%  { transform: scale(1.04); }
-  100% { transform: scale(1); }
-}
-.member-item.present { animation: checkPop 0.2s ease; }
-
-/* ── Visual polish: send bar ── */
-.send-bar-summary strong {
-  font-size: 2rem;
-  line-height: 1;
-  color: var(--accent);
-}
-.send-bar-label {
-  font-size: 0.72rem;
-  color: var(--text-muted);
-  display: block;
-  margin-top: 0.1rem;
-}
-
-/* ── Visual polish: group card hover ── */
-.group-card {
-  transition: background 0.15s, border-color 0.15s, transform 0.1s;
-}
-.group-card:active { transform: scale(0.98); }
-
-/* ── Visual polish: empty state ── */
-.empty-state {
-  padding: 4rem 2rem 2rem;
-}
-.empty-state-icon {
-  font-size: 3rem;
-  margin-bottom: 1rem;
-  display: block;
-}
-.empty-state h2 {
-  font-family: 'Fraunces', serif;
-  font-size: 1.2rem;
-  font-weight: 600;
-  color: var(--text);
-  margin-bottom: 0.5rem;
-}
-.empty-state p {
-  font-size: 0.82rem;
-  color: var(--text-muted);
-  line-height: 1.7;
-  margin-bottom: 1.25rem;
-}
-
-/* ── Visual polish: attendance meta ── */
-.attendance-meta {
-  gap: 0.5rem;
-}
-.date-label {
-  font-size: 0.82rem;
-  font-weight: 500;
-  color: var(--text);
-}
-.member-total {
-  font-size: 0.75rem;
-  color: var(--text-muted);
-  background: var(--surface2);
-  border: 1px solid var(--border);
-  border-radius: 20px;
-  padding: 0.1rem 0.55rem;
-}
-
-/* ── Visual polish: home summary ── */
-.home-summary {
-  font-size: 0.78rem;
-  letter-spacing: 0.02em;
-}
-
-/* ── Member remove confirm (inline in removable-item) ── */
-.member-remove-confirm {
-  display: flex;
-  gap: 0.4rem;
-  margin-left: auto;
-}
-.removable-item { flex-wrap: wrap; gap: 0.4rem; }
-
-/* ── Delete confirm ── */
-.delete-confirm {
-  margin-top: 0.5rem;
-  background: var(--danger-dim);
-  border: 1px solid rgba(224,82,82,0.35);
-  border-radius: 9px;
-  padding: 0.85rem 1rem;
-}
-.delete-confirm-msg {
-  font-size: 0.8rem;
-  color: var(--danger);
-  margin-bottom: 0.65rem;
-}
-.delete-confirm-btns { display: flex; gap: 0.5rem; }
-.delete-confirm-btns .btn-danger { margin-top: 0; flex: 1; }
-.btn-outline-cancel {
-  flex: 1;
-  font-family: 'DM Mono', monospace;
-  font-size: 0.82rem;
-  padding: 0.65rem;
-  border-radius: 9px;
-  border: 1px solid var(--border);
-  background: var(--surface2);
-  color: var(--text-muted);
-  cursor: pointer;
-  transition: all 0.15s;
-}
-.btn-outline-cancel:hover, .btn-outline-cancel:focus { border-color: var(--text-muted); color: var(--text); outline: none; }
-
-/* ── Import section ── */
-.import-textarea {
-  resize: vertical;
-  min-height: 90px;
-  margin-bottom: 0.5rem;
-  font-size: 0.82rem;
-  line-height: 1.6;
-}
-.import-section {
-  border-top: 1px solid var(--border);
-  padding-top: 0.75rem;
-  margin-bottom: 0.75rem;
-}
-.import-section-label {
-  font-size: 0.68rem;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--text-muted);
-  margin-bottom: 0.3rem;
-}
-.import-hint {
-  font-size: 0.75rem;
-  color: var(--text-muted);
-  line-height: 1.5;
-  margin-bottom: 0.6rem;
-}
-.btn-import {
-  font-family: 'DM Mono', monospace;
-  font-size: 0.8rem;
-  padding: 0.6rem 1rem;
-  border-radius: 8px;
-  border: 1px solid var(--border);
-  background: var(--surface2);
-  color: var(--text-muted);
-  cursor: pointer;
-  transition: all 0.15s;
-  width: 100%;
-  text-align: left;
-}
-.btn-import:hover, .btn-import:focus { border-color: var(--accent); color: var(--accent); outline: none; }
-
-/* ── Colour picker ── */
-.colour-picker { display: flex; gap: 0.6rem; flex-wrap: wrap; margin-top: 0.3rem; }
-.colour-btn {
-  width: 36px; height: 36px;
-  border-radius: 50%;
-  border: 3px solid transparent;
-  cursor: pointer;
-  transition: all 0.12s;
-  flex-shrink: 0;
-}
-.colour-btn.selected { border-color: var(--text); transform: scale(1.15); }
-.colour-btn:focus { outline: 3px solid var(--accent-glow); outline-offset: 2px; }
-
-/* ── Group card colour bar ── */
-.group-card-colour {
-  width: 4px;
-  border-radius: 2px;
-  align-self: stretch;
-  flex-shrink: 0;
-  min-height: 36px;
-}
-
-/* ── Welcome view ── */
-.welcome-body {
-  flex: 1;
-  overflow-y: auto;
-  padding: 2.5rem 1.5rem 2rem;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-}
-.welcome-logo { font-size: 3rem; margin-bottom: 0.75rem; }
-.welcome-title {
-  font-family: 'Fraunces', serif;
-  font-size: 2rem;
-  font-weight: 600;
-  color: var(--text);
-  margin-bottom: 0.35rem;
-}
-.welcome-sub { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 2rem; }
-.welcome-steps {
-  display: flex;
-  flex-direction: column;
-  gap: 1.25rem;
-  width: 100%;
-  text-align: left;
-}
-.welcome-step {
-  display: flex;
-  gap: 1rem;
-  align-items: flex-start;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 0.9rem 1rem;
-}
-.welcome-step-icon { font-size: 1.4rem; flex-shrink: 0; margin-top: 0.1rem; }
-.welcome-step strong { display: block; font-size: 0.88rem; color: var(--text); margin-bottom: 0.2rem; }
-.welcome-step p { font-size: 0.78rem; color: var(--text-muted); line-height: 1.5; margin: 0; }
-
-.icon-pick-btn {
-  width: 40px; height: 40px;
-  border-radius: 8px;
-  border: 2px solid var(--border);
-  background: var(--surface2);
-  font-size: 1.25rem;
-  cursor: pointer;
-  display: grid; place-items: center;
-  transition: all 0.12s;
-}
-.icon-pick-btn.selected { border-color: var(--accent); background: var(--accent-dim); }
-.icon-pick-btn:focus { outline: 2px solid var(--accent); }
-</style>
-
 <script>
-// ══════════════════════════════════════════════════
-// DATA
-// ══════════════════════════════════════════════════
 const STORAGE_KEY = 'rollcall_v1';
-
-const DEFAULT_GROUPS = [];
-
 let state = load();
-let attendance = {};    // groupId → { name: bool }
+let attendance = {};
 let activeGroupId = null;
 let selectedIcon = '👥';
 
 function load() {
   try {
     const s = localStorage.getItem(STORAGE_KEY);
-    return s ? JSON.parse(s) : { groups: JSON.parse(JSON.stringify(DEFAULT_GROUPS)) };
-  } catch { return { groups: JSON.parse(JSON.stringify(DEFAULT_GROUPS)) }; }
+    return s ? JSON.parse(s) : { groups: [] };
+  } catch { return { groups: [] }; }
 }
 function save() {
   try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch {}
@@ -1302,9 +957,7 @@ function ensureAttendance(gid) {
   const g = state.groups.find(g => g.id === gid);
   if (g) g.members.forEach(m => { if (attendance[gid][m] === undefined) attendance[gid][m] = false; });
 }
-// ══════════════════════════════════════════════════
-// DATE
-// ══════════════════════════════════════════════════
+
 const now = new Date();
 const todayName = now.toLocaleDateString('en-IE', { weekday: 'long' });
 function ordinal(n) {
@@ -1315,38 +968,28 @@ function ordinal(n) {
 const shortDate = todayName + ' ' + ordinal(now.getDate()) + ' ' + now.toLocaleDateString('en-IE', { month: 'long' });
 const dateOnly = ordinal(now.getDate()) + ' ' + now.toLocaleDateString('en-IE', { month: 'long', year: 'numeric' });
 
-// ══════════════════════════════════════════════════
-// VIEWS
-// ══════════════════════════════════════════════════
 function showView(id) {
   document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
   document.getElementById(id).classList.add('active');
   window.scrollTo(0,0);
 }
 
-// ══════════════════════════════════════════════════
-// HOME
-// ══════════════════════════════════════════════════
 function renderHome() {
   const list = document.getElementById('groupList');
   const empty = document.getElementById('emptyState');
   list.innerHTML = '';
-
   const groups = state.groups;
   const summaryEl = document.getElementById('homeSummary');
   const groupWord = groups.length === 1 ? 'group' : 'groups';
   summaryEl.textContent = groups.length + ' ' + groupWord + '  ·  ' + shortDate;
   summaryEl.setAttribute('aria-label', groups.length + ' ' + groupWord + ', ' + shortDate);
-
   if (groups.length === 0) { empty.classList.remove('hidden'); return; }
   empty.classList.add('hidden');
-
   groups.forEach(g => {
     ensureAttendance(g.id);
-    // <button> makes VoiceOver treat this as a leaf — reads only aria-label, no drilling into children
     const card = document.createElement('button');
     card.className = 'group-card';
-    const cardColour = g.colour || '#3dd68c';
+    const cardColour = g.colour || '#E8850A';
     card.setAttribute('aria-label', g.name + (g.org ? ', ' + g.org : '') + ', ' + g.members.length + ', ' + shortDate);
     card.innerHTML = `
       <div class="group-card-colour" aria-hidden="true" style="background:${cardColour};"></div>
@@ -1363,21 +1006,16 @@ function renderHome() {
   });
 }
 
-// ══════════════════════════════════════════════════
-// ATTENDANCE VIEW
-// ══════════════════════════════════════════════════
 function openGroup(gid) {
   activeGroupId = gid;
   ensureAttendance(gid);
   const g = state.groups.find(g => g.id === gid);
   if (!g) return;
-
   document.getElementById('attendanceTitle').textContent = g.name;
   document.getElementById('attendanceDateLabel').textContent = shortDate;
   document.getElementById('attendanceMemberTotal').textContent = g.members.length + ' members';
   document.getElementById('attendanceMeta').setAttribute('aria-label', shortDate + ', ' + g.members.length + ' members');
   document.getElementById('memberSearch').value = '';
-
   renderMemberList('');
   showView('attendanceView');
 }
@@ -1386,35 +1024,26 @@ function renderMemberList(filter) {
   const g = state.groups.find(g => g.id === activeGroupId);
   if (!g) return;
   ensureAttendance(activeGroupId);
-
   const ul = document.getElementById('memberListEl');
   const noRes = document.getElementById('noResultsMsg');
   ul.innerHTML = '';
-
   const filtered = g.members.filter(m => m.toLowerCase().includes(filter.toLowerCase()));
   noRes.classList.toggle('hidden', filtered.length > 0);
-
   filtered.forEach(name => {
     const checked = !!attendance[activeGroupId][name];
-
     const li = document.createElement('li');
     li.className = 'member-item' + (checked ? ' present' : '');
-    // Single VoiceOver target — whole row is one checkbox element
     li.setAttribute('role', 'checkbox');
     li.setAttribute('aria-checked', checked ? 'true' : 'false');
     li.setAttribute('aria-label', name);
     li.setAttribute('tabindex', '0');
-
-    // Visual checkbox — hidden from accessibility tree
     const vcb = document.createElement('span');
     vcb.className = 'visual-checkbox' + (checked ? ' checked' : '');
     vcb.setAttribute('aria-hidden', 'true');
-
     const nameSpan = document.createElement('span');
     nameSpan.className = 'member-name';
     nameSpan.textContent = name;
     nameSpan.setAttribute('aria-hidden', 'true');
-
     function toggle() {
       const nowChecked = !attendance[activeGroupId][name];
       attendance[activeGroupId][name] = nowChecked;
@@ -1423,17 +1052,12 @@ function renderMemberList(filter) {
       vcb.classList.toggle('checked', nowChecked);
       updateAttendanceCounts();
     }
-
     li.addEventListener('click', toggle);
-    li.addEventListener('keydown', e => {
-      if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); toggle(); }
-    });
-
+    li.addEventListener('keydown', e => { if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); toggle(); } });
     li.appendChild(vcb);
     li.appendChild(nameSpan);
     ul.appendChild(li);
   });
-
   updateAttendanceCounts();
 }
 
@@ -1442,50 +1066,32 @@ function updateAttendanceCounts() {
   if (!g) return;
   ensureAttendance(activeGroupId);
   const count = g.members.filter(m => attendance[activeGroupId][m]).length;
-
   document.getElementById('footerPresentCount').textContent = count;
   document.getElementById('footerTotalLabel').textContent = 'of ' + g.members.length + ' present';
   document.getElementById('sendEmailBtn').disabled = count === 0;
 }
 
-// ── Search + quick actions ──
 document.getElementById('memberSearch').addEventListener('input', e => renderMemberList(e.target.value));
-
 document.getElementById('selectAllBtn').addEventListener('click', () => {
   const g = state.groups.find(g => g.id === activeGroupId);
   const filter = document.getElementById('memberSearch').value;
-  if (g) g.members.filter(m => m.toLowerCase().includes(filter.toLowerCase()))
-                   .forEach(m => attendance[activeGroupId][m] = true);
+  if (g) g.members.filter(m => m.toLowerCase().includes(filter.toLowerCase())).forEach(m => attendance[activeGroupId][m] = true);
   renderMemberList(filter);
 });
-
 document.getElementById('clearAllBtn').addEventListener('click', () => {
   const g = state.groups.find(g => g.id === activeGroupId);
   if (g) g.members.forEach(m => attendance[activeGroupId][m] = false);
   renderMemberList(document.getElementById('memberSearch').value);
 });
-
-// ── Back ──
-document.getElementById('backBtn').addEventListener('click', () => {
-  activeGroupId = null;
-  renderHome();
-  showView('homeView');
-});
-
-// ── Send email ──
+document.getElementById('backBtn').addEventListener('click', () => { activeGroupId = null; renderHome(); showView('homeView'); });
 document.getElementById('sendEmailBtn').addEventListener('click', () => {
   const g = state.groups.find(g => g.id === activeGroupId);
   if (!g) return;
   const present = g.members.filter(m => attendance[activeGroupId][m]);
   if (!present.length) return;
-
   const subject = g.name + ' Attendance — ' + dateOnly;
   const body = present.join('\n');
-
-  window.location.href = 'mailto:' + (g.email || '')
-    + '?subject=' + encodeURIComponent(subject)
-    + '&body=' + encodeURIComponent(body);
-
+  window.location.href = 'mailto:' + (g.email || '') + '?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
   setTimeout(() => {
     g.members.forEach(m => attendance[activeGroupId][m] = false);
     document.getElementById('memberSearch').value = '';
@@ -1494,52 +1100,32 @@ document.getElementById('sendEmailBtn').addEventListener('click', () => {
   }, 1500);
 });
 
-// ══════════════════════════════════════════════════
-// SHEETS
-// ══════════════════════════════════════════════════
 const backdrop = document.getElementById('sheetBackdrop');
 let openSheetId = null;
-
 const VIEW_IDS = ['welcomeView', 'homeView', 'attendanceView'];
 
-function setInertBackground(activeSheetId) {
-  // Inert all views — sheets are already inert by default in HTML
-  VIEW_IDS.forEach(id => {
-    const el = document.getElementById(id);
-    if (el) { el.inert = true; el.setAttribute('aria-hidden', 'true'); }
-  });
+function setInertBackground() {
+  VIEW_IDS.forEach(id => { const el = document.getElementById(id); if (el) { el.inert = true; el.setAttribute('aria-hidden', 'true'); } });
 }
-
 function clearInertBackground() {
-  // Only un-inert the views — sheets manage their own inert state
-  VIEW_IDS.forEach(id => {
-    const el = document.getElementById(id);
-    if (el) { el.inert = false; el.removeAttribute('aria-hidden'); }
-  });
+  VIEW_IDS.forEach(id => { const el = document.getElementById(id); if (el) { el.inert = false; el.removeAttribute('aria-hidden'); } });
 }
-
 function openSheet(id) {
   closeSheet(false);
   const sheet = document.getElementById(id);
   openSheetId = id;
   backdrop.classList.add('open');
-  // Make sheet accessible
   sheet.removeAttribute('inert');
   sheet.setAttribute('aria-hidden', 'false');
   sheet.classList.add('open');
-  setInertBackground(id);
+  setInertBackground();
   const first = sheet.querySelector('button, input, select, [tabindex]');
   if (first) setTimeout(() => first.focus(), 280);
 }
-
 function closeSheet(refocus = true) {
   if (openSheetId) {
     const sheet = document.getElementById(openSheetId);
-    if (sheet) {
-      sheet.classList.remove('open');
-      sheet.setAttribute('inert', '');
-      sheet.setAttribute('aria-hidden', 'true');
-    }
+    if (sheet) { sheet.classList.remove('open'); sheet.setAttribute('inert', ''); sheet.setAttribute('aria-hidden', 'true'); }
     openSheetId = null;
   }
   backdrop.classList.remove('open');
@@ -1547,77 +1133,50 @@ function closeSheet(refocus = true) {
 }
 
 backdrop.addEventListener('click', () => closeSheet());
+document.querySelectorAll('[data-close]').forEach(btn => { btn.addEventListener('click', () => closeSheet()); });
 
-document.querySelectorAll('[data-close]').forEach(btn => {
-  btn.addEventListener('click', () => closeSheet());
-});
-
-// ── Settings ──
-// Update backup hint based on standalone mode
 (function() {
   const hint = document.getElementById('backupHint');
-  if (hint) {
-    hint.textContent = window.navigator.standalone ? 'Opens share sheet' : 'Downloads file';
-    hint.style.cssText = 'font-size:0.68rem;color:var(--text-muted);margin-left:auto;';
-  }
+  if (hint) { hint.textContent = window.navigator.standalone ? 'Opens share sheet' : 'Downloads file'; hint.style.cssText = 'font-size:0.68rem;color:var(--text-muted);margin-left:auto;'; }
 })();
 
-document.getElementById('settingsBtn').addEventListener('click', () => {
-  openSheet('settingsSheet');
-});
+document.getElementById('settingsBtn').addEventListener('click', () => openSheet('settingsSheet'));
 document.getElementById('helpBtn').addEventListener('click', () => openSheet('helpSheet'));
-
-
-document.getElementById('helpFromSettingsBtn').addEventListener('click', () => { openSheet('helpSheet'); });
-document.getElementById('kofiBtn').addEventListener('click', () => {
-  window.open('https://ko-fi.com/st94410093', '_blank');
-});
+document.getElementById('helpFromSettingsBtn').addEventListener('click', () => openSheet('helpSheet'));
+document.getElementById('kofiBtn').addEventListener('click', () => window.open('https://ko-fi.com/st94410093', '_blank'));
 document.getElementById('manageGroupsBtn').addEventListener('click', () => { renderManageGroups(); openSheet('manageGroupsSheet'); });
+document.getElementById('groupSettingsBtn').addEventListener('click', () => { const g = state.groups.find(g => g.id === activeGroupId); if (!g) return; openGroupForm(g); });
 
-// ── Group settings (from attendance view) ──
-document.getElementById('groupSettingsBtn').addEventListener('click', () => {
-  const g = state.groups.find(g => g.id === activeGroupId);
-  if (!g) return;
-  openGroupForm(g);
-});
-
-// ── Manage groups list ──
 function renderManageGroups() {
   const body = document.getElementById('manageGroupsBody');
   body.innerHTML = '';
-
-  // Add new group button at top
   const addBtn = document.createElement('button');
   addBtn.className = 'menu-row';
   addBtn.setAttribute('aria-label', 'Add new group');
   addBtn.innerHTML = '<span class="menu-icon" aria-hidden="true">+</span><span class="menu-label" aria-hidden="true">Add new group</span><span class="menu-chevron" aria-hidden="true">›</span>';
-  addBtn.addEventListener('click', () => { openGroupForm(null); });
+  addBtn.addEventListener('click', () => openGroupForm(null));
   body.appendChild(addBtn);
-
   if (!state.groups.length) {
     const empty = document.createElement('p');
     empty.style.cssText = 'color:var(--text-muted);font-size:0.85rem;text-align:center;padding:1.5rem;';
-    empty.textContent = 'No groups yet. Tap Add new group above.';
+    empty.textContent = 'No groups yet.';
     body.appendChild(empty);
     return;
   }
-
   const divider = document.createElement('div');
   divider.style.cssText = 'border-top:1px solid var(--border);margin:0.25rem 0;';
   divider.setAttribute('aria-hidden', 'true');
   body.appendChild(divider);
-
   state.groups.forEach(g => {
     const row = document.createElement('button');
     row.className = 'menu-row';
     row.setAttribute('aria-label', g.name + (g.org ? ', ' + g.org : '') + ', edit');
     row.innerHTML = `<span class="menu-icon" aria-hidden="true">${g.icon || '👥'}</span><span class="menu-label" aria-hidden="true">${g.name}</span><span class="menu-chevron" aria-hidden="true">›</span>`;
-    row.addEventListener('click', () => { openGroupForm(g); });
+    row.addEventListener('click', () => openGroupForm(g));
     body.appendChild(row);
   });
 }
 
-// ── Group form ──
 document.getElementById('addGroupBtn').addEventListener('click', () => openGroupForm(null));
 document.getElementById('emptyAddGroupBtn').addEventListener('click', () => openGroupForm(null));
 
@@ -1636,19 +1195,16 @@ function openGroupForm(g) {
     document.getElementById('groupFormContent').removeAttribute('aria-hidden');
   }
   selectedIcon = g?.icon || '👥';
-  selectedColour = g?.colour || '#3dd68c';
+  selectedColour = g?.colour || '#E8850A';
   renderIconPicker();
   renderColourPicker();
   openSheet('groupFormSheet');
 }
 
 function renderIconPicker() {
-  document.querySelectorAll('.icon-pick-btn').forEach(btn => {
-    btn.classList.toggle('selected', btn.dataset.icon === selectedIcon);
-  });
+  document.querySelectorAll('.icon-pick-btn').forEach(btn => btn.classList.toggle('selected', btn.dataset.icon === selectedIcon));
   document.getElementById('groupFormIcon').value = selectedIcon;
 }
-
 document.getElementById('iconPicker').addEventListener('click', e => {
   const btn = e.target.closest('.icon-pick-btn');
   if (!btn) return;
@@ -1663,8 +1219,7 @@ document.getElementById('saveGroupBtn').addEventListener('click', () => {
   const org = document.getElementById('groupFormOrg').value.trim();
   const email = document.getElementById('groupFormEmail').value.trim();
   const icon = document.getElementById('groupFormIcon').value || '👥';
-  const colour = document.getElementById('groupFormColour').value || '#3dd68c';
-
+  const colour = document.getElementById('groupFormColour').value || '#E8850A';
   if (id) {
     const g = state.groups.find(g => g.id === id);
     if (g) { g.name = name; g.org = org; g.email = email; g.icon = icon; g.colour = colour; }
@@ -1685,7 +1240,6 @@ function showDeleteConfirm() {
   document.getElementById('deleteConfirm').classList.remove('hidden');
   setTimeout(() => document.getElementById('deleteGroupConfirmBtn').focus(), 50);
 }
-
 function hideDeleteConfirm() {
   document.getElementById('groupFormContent').inert = false;
   document.getElementById('groupFormContent').removeAttribute('aria-hidden');
@@ -1694,10 +1248,8 @@ function hideDeleteConfirm() {
   document.getElementById('deleteGroupBtn').setAttribute('aria-hidden', 'false');
   document.getElementById('deleteGroupBtn').focus();
 }
-
 document.getElementById('deleteGroupBtn').addEventListener('click', showDeleteConfirm);
 document.getElementById('deleteGroupCancelBtn').addEventListener('click', hideDeleteConfirm);
-
 document.getElementById('deleteGroupConfirmBtn').addEventListener('click', () => {
   const id = document.getElementById('groupFormId').value;
   const g = state.groups.find(g => g.id === id);
@@ -1705,17 +1257,15 @@ document.getElementById('deleteGroupConfirmBtn').addEventListener('click', () =>
   state.groups = state.groups.filter(g => g.id !== id);
   delete attendance[id];
   save();
-  // Restore inert before closing so closeSheet doesn't get confused
   document.getElementById('groupFormContent').inert = false;
   document.getElementById('groupFormContent').removeAttribute('aria-hidden');
   closeSheet();
-  if (activeGroupId === id) { activeGroupId = null; }
+  if (activeGroupId === id) activeGroupId = null;
   renderHome();
   showView('homeView');
   toast(g.name + ' deleted');
 });
 
-// ── Manage members ──
 document.getElementById('manageMembersBtn').addEventListener('click', () => {
   const g = state.groups.find(g => g.id === activeGroupId);
   if (!g) return;
@@ -1745,7 +1295,6 @@ function addMember() {
   toast(name + ' added');
 }
 
-// ── Import members ──
 document.getElementById('importPasteBtn').addEventListener('click', () => {
   const g = state.groups.find(g => g.id === activeGroupId);
   if (!g) return;
@@ -1753,11 +1302,7 @@ document.getElementById('importPasteBtn').addEventListener('click', () => {
   if (!text.trim()) { toast('Nothing to import'); return; }
   const lines = text.split(/\r?\n/).map(l => l.trim()).filter(l => l.length > 0);
   let added = 0, skipped = 0;
-  lines.forEach(name => {
-    if (g.members.includes(name)) { skipped++; return; }
-    g.members.push(name);
-    added++;
-  });
+  lines.forEach(name => { if (g.members.includes(name)) { skipped++; return; } g.members.push(name); added++; });
   g.members.sort((a,b) => a.localeCompare(b));
   ensureAttendance(activeGroupId);
   save();
@@ -1772,10 +1317,7 @@ function renderRemovableList() {
   const g = state.groups.find(g => g.id === activeGroupId);
   const container = document.getElementById('removableMemberList');
   container.innerHTML = '';
-  if (!g || !g.members.length) {
-    container.innerHTML = '<p style="color:var(--text-muted);font-size:0.82rem;text-align:center;padding:1rem;">No members yet.</p>';
-    return;
-  }
+  if (!g || !g.members.length) { container.innerHTML = '<p style="color:var(--text-muted);font-size:0.82rem;text-align:center;padding:1rem;">No members yet.</p>'; return; }
   [...g.members].forEach(name => {
     const row = document.createElement('li');
     row.className = 'removable-item';
@@ -1800,69 +1342,38 @@ function renderRemovableList() {
   });
 }
 
-// ══════════════════════════════════════════════════
-// TOAST
-// ══════════════════════════════════════════════════
 let toastTimer;
 function toast(msg) {
   const el = document.getElementById('toast');
   el.textContent = msg;
   el.classList.add('show');
   clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => {
-    el.classList.remove('show');
-    // Clear text so VoiceOver cannot swipe to stale toast content
-    setTimeout(() => { el.textContent = ''; }, 300);
-  }, 2500);
+  toastTimer = setTimeout(() => { el.classList.remove('show'); setTimeout(() => { el.textContent = ''; }, 300); }, 2500);
 }
 
-// ══════════════════════════════════════════════════
-// WELCOME
-// ══════════════════════════════════════════════════
-document.getElementById('welcomeStartBtn').addEventListener('click', () => {
-  state.welcomed = true;
-  save();
-  renderHome();
-  showView('homeView');
-});
+document.getElementById('welcomeStartBtn').addEventListener('click', () => { state.welcomed = true; save(); renderHome(); showView('homeView'); });
 
-// ══════════════════════════════════════════════════
-// BACKUP & RESTORE
-// ══════════════════════════════════════════════════
 document.getElementById('backupBtn').addEventListener('click', () => {
   const data = JSON.stringify(state, null, 2);
   const filename = 'rollcall-backup-' + now.toISOString().slice(0,10) + '.json';
   const blob = new Blob([data], { type: 'application/json' });
-
-  // iOS standalone (home screen) mode blocks programmatic <a> downloads.
-  // Detect standalone and use window.open with the blob URL instead —
-  // iOS will show the share sheet letting the user save to Files or send via email.
   const isStandalone = window.navigator.standalone === true;
-
   if (isStandalone) {
-    // Open blob in new window — iOS share sheet appears
     const url = URL.createObjectURL(blob);
     window.open(url, '_blank');
     setTimeout(() => URL.revokeObjectURL(url), 5000);
     toast('Tap the share button to save');
   } else {
-    // Normal browser — programmatic download works fine
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
-    a.href = url;
-    a.download = filename;
-    a.click();
+    a.href = url; a.download = filename; a.click();
     URL.revokeObjectURL(url);
     toast('Backup saved');
   }
 });
 
 let pendingRestoreData = null;
-
-document.getElementById('restoreBtn').addEventListener('click', () => {
-  document.getElementById('restoreInput').click();
-});
-
+document.getElementById('restoreBtn').addEventListener('click', () => document.getElementById('restoreInput').click());
 document.getElementById('restoreInput').addEventListener('change', e => {
   const file = e.target.files[0];
   if (!file) return;
@@ -1872,7 +1383,6 @@ document.getElementById('restoreInput').addEventListener('change', e => {
       const restored = JSON.parse(ev.target.result);
       if (!restored.groups) throw new Error('Invalid backup');
       pendingRestoreData = restored;
-      // Show inline confirm
       document.getElementById('restoreConfirm').classList.remove('hidden');
       setTimeout(() => document.getElementById('restoreConfirmBtn').focus(), 50);
     } catch { toast('Could not read backup file'); }
@@ -1880,11 +1390,9 @@ document.getElementById('restoreInput').addEventListener('change', e => {
   reader.readAsText(file);
   e.target.value = '';
 });
-
 document.getElementById('restoreConfirmBtn').addEventListener('click', () => {
   if (!pendingRestoreData) return;
   state.groups = pendingRestoreData.groups;
-  state.showMemberCount = pendingRestoreData.showMemberCount || false;
   state.welcomed = pendingRestoreData.welcomed || false;
   attendance = {};
   state.groups.forEach(g => ensureAttendance(g.id));
@@ -1895,41 +1403,38 @@ document.getElementById('restoreConfirmBtn').addEventListener('click', () => {
   closeSheet();
   toast('Backup restored');
 });
-
 document.getElementById('restoreCancelBtn').addEventListener('click', () => {
   pendingRestoreData = null;
   document.getElementById('restoreConfirm').classList.add('hidden');
   document.getElementById('restoreBtn').focus();
 });
 
-// ══════════════════════════════════════════════════
-// COLOUR PICKER
-// ══════════════════════════════════════════════════
-let selectedColour = '#3dd68c';
-
+let selectedColour = '#E8850A';
 document.getElementById('colourPicker').addEventListener('click', e => {
   const btn = e.target.closest('.colour-btn');
   if (!btn) return;
   selectedColour = btn.dataset.colour;
   renderColourPicker();
 });
-
 function renderColourPicker() {
-  document.querySelectorAll('.colour-btn').forEach(btn => {
-    btn.classList.toggle('selected', btn.dataset.colour === selectedColour);
-  });
+  document.querySelectorAll('.colour-btn').forEach(btn => btn.classList.toggle('selected', btn.dataset.colour === selectedColour));
   document.getElementById('groupFormColour').value = selectedColour;
 }
 
-// ══════════════════════════════════════════════════
-// INIT
-// ══════════════════════════════════════════════════
 state.groups.forEach(g => ensureAttendance(g.id));
 if (!state.welcomed) {
   showView('welcomeView');
 } else {
   renderHome();
   showView('homeView');
+}
+</script>
+
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js').catch(() => {});
+  });
 }
 </script>
 
