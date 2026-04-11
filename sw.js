@@ -1,7 +1,5 @@
-
-
-const CACHE_NAME = 'rollcall-v1';
-const FILES = ['/Roll-call/index.html'];
+const CACHE_NAME = 'rollcall-v2';
+const FILES = ['./', './index.html', './sw.js'];
 
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE_NAME).then(c => c.addAll(FILES)));
@@ -16,7 +14,17 @@ self.addEventListener('activate', e => {
 });
 
 self.addEventListener('fetch', e => {
+  const req = e.request;
+  if (req.method !== 'GET') return;
   e.respondWith(
-    caches.match(e.request).then(cached => cached || fetch(e.request))
+    caches.match(req).then(cached => {
+      if (cached) return cached;
+      return fetch(req).catch(() => {
+        if (req.mode === 'navigate') {
+          return caches.match('./index.html');
+        }
+        return Response.error();
+      });
+    })
   );
 });
