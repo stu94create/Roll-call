@@ -1,4 +1,4 @@
-const CACHE_NAME = 'rollcall-v2';
+const CACHE_NAME = 'rollcall-v3';
 const FILES = ['./', './index.html', './sw.js'];
 
 self.addEventListener('install', e => {

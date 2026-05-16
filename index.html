@@ -939,25 +939,89 @@ white-space: nowrap;
 
 <script>
 const STORAGE_KEY = 'rollcall_v1';
-let state = load();
+const IDB_NAME = 'rollcall';
+const IDB_STORE = 'kv';
+const IDB_VERSION = 1;
+const IDB_STATE_KEY = 'state';
+
+let state = { groups: [] };
 let attendance = {};
 let activeGroupId = null;
 let selectedIcon = '👥';
 
-function load() {
+// Ask the browser to keep our storage around. On iOS this is the main
+// thing that stops the data being evicted when the device is low on space.
+if (navigator.storage && typeof navigator.storage.persist === 'function') {
+  navigator.storage.persist().catch(() => {});
+}
+
+let _dbPromise = null;
+function openDb() {
+  if (_dbPromise) return _dbPromise;
+  if (!('indexedDB' in window)) return Promise.reject(new Error('IndexedDB unavailable'));
+  _dbPromise = new Promise((resolve, reject) => {
+    const req = indexedDB.open(IDB_NAME, IDB_VERSION);
+    req.onupgradeneeded = () => req.result.createObjectStore(IDB_STORE);
+    req.onsuccess = () => resolve(req.result);
+    req.onerror = () => reject(req.error);
+  });
+  return _dbPromise;
+}
+function idbGetState() {
+  return openDb().then(db => new Promise((resolve, reject) => {
+    const tx = db.transaction(IDB_STORE, 'readonly');
+    const req = tx.objectStore(IDB_STORE).get(IDB_STATE_KEY);
+    req.onsuccess = () => resolve(req.result);
+    req.onerror = () => reject(req.error);
+  }));
+}
+function idbPutState(value) {
+  return openDb().then(db => new Promise((resolve, reject) => {
+    const tx = db.transaction(IDB_STORE, 'readwrite');
+    tx.objectStore(IDB_STORE).put(value, IDB_STATE_KEY);
+    tx.oncomplete = () => resolve();
+    tx.onerror = () => reject(tx.error);
+  }));
+}
+
+async function load() {
+  // IndexedDB is the primary store — it's the bucket iOS evicts last.
+  try {
+    const fromIdb = await idbGetState();
+    if (fromIdb) return fromIdb;
+  } catch (err) {
+    console.error('Roll-Call: failed to load state from IndexedDB', err);
+  }
+  // Fallback / one-time migration from the legacy localStorage copy.
   try {
     const s = localStorage.getItem(STORAGE_KEY);
-    return s ? JSON.parse(s) : { groups: [] };
+    if (s) {
+      const parsed = JSON.parse(s);
+      idbPutState(parsed).catch(() => {});
+      return parsed;
+    }
   } catch (err) {
     console.error('Roll-Call: failed to load state from localStorage', err);
-    return { groups: [] };
   }
+  return { groups: [] };
 }
 function save() {
+  // Mirror to localStorage synchronously so a tab close right after a save
+  // still leaves us with a copy, even if the IDB write hasn't flushed yet.
+  let lsOk = true;
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
   } catch (err) {
+    lsOk = false;
     console.error('Roll-Call: failed to save state to localStorage', err);
+  }
+  idbPutState(state).catch(err => {
+    console.error('Roll-Call: failed to save state to IndexedDB', err);
+    if (!lsOk) {
+      try { toast('Could not save — storage full'); } catch {}
+    }
+  });
+  if (!lsOk) {
     try { toast('Could not save — storage full'); } catch {}
   }
 }
@@ -1492,13 +1556,16 @@ function renderColourPicker() {
   document.getElementById('groupFormColour').value = selectedColour;
 }
 
-state.groups.forEach(g => ensureAttendance(g.id));
-if (!state.welcomed) {
-  showView('welcomeView');
-} else {
-  renderHome();
-  showView('homeView');
-}
+(async () => {
+  state = await load();
+  state.groups.forEach(g => ensureAttendance(g.id));
+  if (!state.welcomed) {
+    showView('welcomeView');
+  } else {
+    renderHome();
+    showView('homeView');
+  }
+})();
 </script>
 
 <script>
