@@ -1,5 +1,5 @@
-const CACHE_NAME = 'rollcall-v4';
-const FILES = ['./', './index.html', './sw.js'];
+const CACHE_NAME = 'rollcall-v5';
+const FILES = ['./', './index.html', './sw.js', './manifest.json', './icon.png', './icon-192.png', './apple-touch-icon.png'];
 
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE_NAME).then(c => c.addAll(FILES)));
