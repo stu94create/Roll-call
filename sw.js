@@ -1,4 +1,4 @@
-const CACHE_NAME = 'rollcall-v5';
+const CACHE_NAME = 'rollcall-v6';
 const FILES = ['./', './index.html', './sw.js', './manifest.json', './icon.png', './icon-192.png', './apple-touch-icon.png'];
 
 self.addEventListener('install', e => {

@@ -1292,7 +1292,12 @@ document.querySelectorAll('[data-close]').forEach(btn => { btn.addEventListener(
 
 (function() {
   const hint = document.getElementById('backupHint');
-  if (hint) { hint.textContent = window.navigator.standalone ? 'Opens share sheet' : 'Downloads file'; hint.style.cssText = 'font-size:0.68rem;color:var(--text-muted);margin-left:auto;'; }
+  if (hint) {
+    let canShareFiles = false;
+    try { canShareFiles = !!(navigator.canShare && navigator.canShare({ files: [new File([''], 'x.json', { type: 'application/json' })] })); } catch (e) {}
+    hint.textContent = canShareFiles ? 'Opens share sheet' : 'Downloads file';
+    hint.style.cssText = 'font-size:0.68rem;color:var(--text-muted);margin-left:auto;';
+  }
 })();
 
 document.getElementById('settingsBtn').addEventListener('click', () => openSheet('settingsSheet'));
@@ -1566,23 +1571,28 @@ function toast(msg) {
 
 document.getElementById('welcomeStartBtn').addEventListener('click', () => { state.welcomed = true; save(); renderHome(); showView('homeView'); });
 
-document.getElementById('backupBtn').addEventListener('click', () => {
+document.getElementById('backupBtn').addEventListener('click', async () => {
   const data = JSON.stringify(state, null, 2);
   const filename = 'rollcall-backup-' + now.toISOString().slice(0,10) + '.json';
   const blob = new Blob([data], { type: 'application/json' });
-  const isStandalone = window.navigator.standalone === true;
-  if (isStandalone) {
-    const url = URL.createObjectURL(blob);
-    window.open(url, '_blank');
-    setTimeout(() => URL.revokeObjectURL(url), 5000);
-    toast('Tap the share button to save');
-  } else {
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url; a.download = filename; a.click();
-    URL.revokeObjectURL(url);
-    toast('Backup saved');
+  // Prefer the native share sheet — it offers "Save to Files", Mail, etc.
+  // and works inside an installed iOS PWA (window.open just opened Safari).
+  try {
+    const file = new File([blob], filename, { type: 'application/json' });
+    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+      await navigator.share({ files: [file], title: 'Roll-Call backup' });
+      toast('Backup shared');
+      return;
+    }
+  } catch (err) {
+    if (err && err.name === 'AbortError') return; // user dismissed the share sheet
+    // any other error: fall through to a normal download
   }
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename; a.click();
+  URL.revokeObjectURL(url);
+  toast('Backup saved');
 });
 
 let pendingRestoreData = null;
