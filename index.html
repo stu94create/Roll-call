@@ -663,6 +663,8 @@ white-space: nowrap;
 .import-hint { font-size: 0.75rem; color: var(--text-muted); line-height: 1.5; margin-bottom: 0.6rem; }
 .btn-import { font-family: 'DM Mono', monospace; font-size: 0.8rem; padding: 0.6rem 1rem; border-radius: 8px; border: 1px solid var(--border); background: var(--surface2); color: var(--text-muted); cursor: pointer; transition: all 0.15s; width: 100%; text-align: left; }
 .btn-import:hover, .btn-import:focus { border-color: var(--accent); color: var(--accent); outline: none; }
+.subject-pick-list { display: flex; flex-direction: column; gap: 0.4rem; margin-top: 0.5rem; }
+.subject-pick-list .btn-import { width: 100%; }
 
 .colour-picker { display: flex; gap: 0.6rem; flex-wrap: wrap; margin-top: 0.3rem; }
 .colour-btn { width: 36px; height: 36px; border-radius: 50%; border: 3px solid transparent; cursor: pointer; transition: all 0.12s; flex-shrink: 0; }
@@ -848,6 +850,15 @@ white-space: nowrap;
         <input class="form-input" type="email" id="groupFormEmail" placeholder="">
       </div>
       <div class="form-group">
+        <label class="form-label" for="groupFormTitleInput">Email subject titles <span style="color:var(--text-muted);font-size:0.7rem;">(optional)</span></label>
+        <p class="import-hint">Add one or more subject lines. When you send, you'll pick which one to use. Leave empty to use the group name.</p>
+        <div class="form-row-inline">
+          <input class="form-input" type="text" id="groupFormTitleInput" placeholder="e.g. Monday Yoga Register" autocomplete="off">
+          <button type="button" class="icon-btn" id="addTitleBtn" aria-label="Add subject title" style="width:44px;height:44px;flex-shrink:0;border-color:rgba(232,133,10,0.4);color:var(--accent);">+</button>
+        </div>
+        <ul class="removable-list" id="titleList" aria-label="Email subject titles"></ul>
+      </div>
+      <div class="form-group">
         <label class="form-label" for="groupFormIcon">Icon</label>
         <div style="display:flex;gap:0.5rem;flex-wrap:wrap;margin-top:0.2rem;" id="iconPicker">
           <button type="button" class="icon-pick-btn" data-icon="👥">👥</button>
@@ -888,6 +899,18 @@ white-space: nowrap;
   </div>
 </div>
 
+<div class="sheet" id="subjectPickerSheet" inert aria-hidden="true" role="dialog" aria-modal="true" aria-label="Choose email subject">
+  <div class="sheet-handle" aria-hidden="true"></div>
+  <div class="sheet-header">
+    <h2 class="sheet-title">Choose subject</h2>
+    <button class="sheet-close-btn" data-close="subjectPickerSheet" aria-label="Close subject chooser">Cancel</button>
+  </div>
+  <div class="sheet-sub">
+    <p class="import-hint">Pick the subject line to use for this email.</p>
+    <div class="subject-pick-list" id="subjectPickList"></div>
+  </div>
+</div>
+
 <div class="sheet" id="manageMembersSheet" inert aria-hidden="true" role="dialog" aria-modal="true" aria-label="Manage members">
   <div class="sheet-handle" aria-hidden="true"></div>
   <div class="sheet-header">
@@ -919,9 +942,9 @@ white-space: nowrap;
     <button class="sheet-close-btn" data-close="helpSheet" aria-label="Close Help">Done</button>
   </div>
   <div class="sheet-sub help-content">
-    <div class="help-section"><h3 class="help-heading">👥 Groups</h3><p>Tap New Group on the home screen to create a group. Give it a name, organisation, email address, icon and colour.</p></div>
+    <div class="help-section"><h3 class="help-heading">👥 Groups</h3><p>Tap New Group on the home screen to create a group. Give it a name, organisation, email address, icon and colour. You can also add one or more email subject titles — handy when the same list is sent under different headings.</p></div>
     <div class="help-section"><h3 class="help-heading">✅ Taking attendance</h3><p>Tap a group to open it. Tap each name to mark them present. Use Select all or Clear all to set the whole list at once.</p></div>
-    <div class="help-section"><h3 class="help-heading">📧 Sending the register</h3><p>Tap Send Email at the bottom. Your mail app opens with the subject and body pre-filled. Attendance resets automatically after 1.5 seconds.</p></div>
+    <div class="help-section"><h3 class="help-heading">📧 Sending the register</h3><p>Tap Send Email at the bottom. If the group has more than one subject title, you'll choose which one to use. Your mail app opens with the subject and body pre-filled. Attendance resets automatically after 1.5 seconds.</p></div>
     <div class="help-section"><h3 class="help-heading">💾 Backing up your data</h3><p>Your data is stored on this device only. Go to Settings and tap Backup Data. Save to iCloud Drive after every session.</p></div>
   </div>
 </div>
@@ -1187,12 +1210,10 @@ document.getElementById('clearAllBtn').addEventListener('click', () => {
   renderMemberList(document.getElementById('memberSearch').value);
 });
 document.getElementById('backBtn').addEventListener('click', () => { activeGroupId = null; renderHome(); showView('homeView'); });
-document.getElementById('sendEmailBtn').addEventListener('click', () => {
-  const g = state.groups.find(g => g.id === activeGroupId);
-  if (!g) return;
+function sendAttendanceEmail(g, titleBase) {
   const present = g.members.filter(m => attendance[activeGroupId][m]);
   if (!present.length) return;
-  const subject = g.name + ' Attendance — ' + dateOnly;
+  const subject = titleBase + ' — ' + dateOnly;
   const body = present.join('\n');
   window.location.href = 'mailto:' + (g.email || '') + '?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
   setTimeout(() => {
@@ -1201,6 +1222,32 @@ document.getElementById('sendEmailBtn').addEventListener('click', () => {
     renderMemberList('');
     toast('Sent! Attendance reset.');
   }, 1500);
+}
+function openSubjectPicker(g, titles) {
+  const list = document.getElementById('subjectPickList');
+  list.innerHTML = '';
+  titles.forEach(t => {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'btn-import';
+    btn.textContent = t;
+    btn.setAttribute('aria-label', 'Send with subject ' + t);
+    btn.addEventListener('click', () => { closeSheet(); sendAttendanceEmail(g, t); });
+    list.appendChild(btn);
+  });
+  openSheet('subjectPickerSheet');
+}
+document.getElementById('sendEmailBtn').addEventListener('click', () => {
+  const g = state.groups.find(g => g.id === activeGroupId);
+  if (!g) return;
+  const present = g.members.filter(m => attendance[activeGroupId][m]);
+  if (!present.length) return;
+  const titles = Array.isArray(g.titles) ? g.titles.filter(t => t && t.trim()) : [];
+  if (titles.length > 1) {
+    openSubjectPicker(g, titles);
+  } else {
+    sendAttendanceEmail(g, titles[0] || (g.name + ' Attendance'));
+  }
 });
 
 const backdrop = document.getElementById('sheetBackdrop');
@@ -1297,6 +1344,40 @@ function renderManageGroups() {
 document.getElementById('addGroupBtn').addEventListener('click', () => openGroupForm(null));
 document.getElementById('emptyAddGroupBtn').addEventListener('click', () => openGroupForm(null));
 
+let formTitles = [];
+function renderTitleList() {
+  const ul = document.getElementById('titleList');
+  ul.innerHTML = '';
+  formTitles.forEach((t, i) => {
+    const li = document.createElement('li');
+    li.className = 'removable-item';
+    const span = document.createElement('span');
+    span.textContent = t;
+    span.style.cssText = 'flex:1;min-width:0;overflow-wrap:anywhere;';
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'btn-remove';
+    btn.textContent = 'Remove';
+    btn.setAttribute('aria-label', 'Remove subject title ' + t);
+    btn.addEventListener('click', () => { formTitles.splice(i, 1); renderTitleList(); });
+    li.appendChild(span);
+    li.appendChild(btn);
+    ul.appendChild(li);
+  });
+}
+function addTitleFromInput() {
+  const input = document.getElementById('groupFormTitleInput');
+  const val = input.value.trim();
+  if (!val) return;
+  if (formTitles.some(t => t.toLowerCase() === val.toLowerCase())) { toast('That title is already added'); input.value = ''; return; }
+  formTitles.push(val);
+  input.value = '';
+  renderTitleList();
+  input.focus();
+}
+document.getElementById('addTitleBtn').addEventListener('click', addTitleFromInput);
+document.getElementById('groupFormTitleInput').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); addTitleFromInput(); } });
+
 function openGroupForm(g) {
   const isEdit = !!g;
   document.getElementById('groupFormTitle').textContent = isEdit ? 'Edit Group' : 'New Group';
@@ -1304,6 +1385,9 @@ function openGroupForm(g) {
   document.getElementById('groupFormName').value = g?.name || '';
   document.getElementById('groupFormOrg').value = g?.org || '';
   document.getElementById('groupFormEmail').value = g?.email || '';
+  document.getElementById('groupFormTitleInput').value = '';
+  formTitles = Array.isArray(g?.titles) ? g.titles.slice() : [];
+  renderTitleList();
   document.getElementById('deleteGroupBtn').classList.toggle('hidden', !isEdit);
   document.getElementById('deleteGroupBtn').setAttribute('aria-hidden', 'false');
   document.getElementById('deleteConfirm').classList.add('hidden');
@@ -1337,11 +1421,12 @@ document.getElementById('saveGroupBtn').addEventListener('click', () => {
   const email = document.getElementById('groupFormEmail').value.trim();
   const icon = document.getElementById('groupFormIcon').value || '👥';
   const colour = document.getElementById('groupFormColour').value || '#E8850A';
+  const titles = formTitles.slice();
   if (id) {
     const g = state.groups.find(g => g.id === id);
-    if (g) { g.name = name; g.org = org; g.email = email; g.icon = icon; g.colour = colour; }
+    if (g) { g.name = name; g.org = org; g.email = email; g.icon = icon; g.colour = colour; g.titles = titles; }
   } else {
-    state.groups.push({ id: 'g_' + Date.now(), name, org, icon, colour, email, members: [] });
+    state.groups.push({ id: 'g_' + Date.now(), name, org, icon, colour, email, titles, members: [] });
   }
   save();
   closeSheet();
