@@ -13,6 +13,8 @@ PWA on mobile and desktop.
 - Add members one at a time or paste a list
 - Fast member search and Select All / Clear All shortcuts
 - One-tap "Send Email" that pre-fills a mailto: with the present-members list
+- Multiple email subject titles per group — pick which one to use when sending
+  (handy when the same list goes out under different headings)
 - Five colour themes (amber, green, blue, white, red)
 - JSON backup and restore
 - Works offline via a service worker
